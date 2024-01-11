@@ -2,7 +2,7 @@ FROM debian:stable-slim
 
 # ENV variables
 ENV DEBIAN_FRONTEND noninteractive
-ENV TZ "America/New_York"
+ENV TZ "Asia/Ho_Chi_Minh"
 ENV CUPSADMIN admin
 ENV CUPSPASSWORD password
 
@@ -17,6 +17,7 @@ LABEL org.opencontainers.image.licenses=MIT
 # Install dependencies
 RUN apt-get update -qq  && apt-get upgrade -qqy \
     && apt-get install -qqy \
+    lsb \
     apt-utils \
     usbutils \
     cups \
@@ -37,9 +38,11 @@ EXPOSE 631
 EXPOSE 5353/udp
 
 # Install driver
+RUN mkdir /driver
 COPY ./driver /driver
+RUN chmod +x /driver/install.sh
 RUN cd /driver && bash ./install.sh
-RUN cd / && rm -rf /driver
+RUN rm -rf /driver/*.*
 
 # Baked-in config file changes
 RUN sed -i 's/Listen localhost:631/Listen 0.0.0.0:631/' /etc/cups/cupsd.conf && \
