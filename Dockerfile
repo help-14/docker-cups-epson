@@ -17,7 +17,6 @@ LABEL org.opencontainers.image.licenses=MIT
 # Install dependencies
 RUN apt-get update -qq  && apt-get upgrade -qqy \
     && apt-get install -qqy \
-    lsb \
     apt-utils \
     usbutils \
     cups \
@@ -38,6 +37,7 @@ EXPOSE 631
 EXPOSE 5353/udp
 
 # Install driver
+RUN apt install lsb -y
 RUN mkdir /driver
 COPY ./driver /driver
 RUN chmod +x /driver/install.sh
