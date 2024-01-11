@@ -36,6 +36,11 @@ RUN apt-get update -qq  && apt-get upgrade -qqy \
 EXPOSE 631
 EXPOSE 5353/udp
 
+# Install driver
+COPY ./driver /driver
+RUN bash /driver/install.sh
+RUN rm -rf /driver
+
 # Baked-in config file changes
 RUN sed -i 's/Listen localhost:631/Listen 0.0.0.0:631/' /etc/cups/cupsd.conf && \
     sed -i 's/Browsing Off/Browsing On/' /etc/cups/cupsd.conf && \
