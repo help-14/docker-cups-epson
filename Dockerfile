@@ -15,8 +15,15 @@ LABEL org.opencontainers.image.licenses=MIT
 
 
 # Install dependencies
-RUN apt-get update -qq  && apt-get upgrade -qqy \
-    && apt-get install -qqy \
+RUN apt-get update -qq  && apt-get upgrade -qqy
+
+# Install driver
+RUN mkdir /driver
+COPY ./driver /driver
+RUN apt install /driver/epson-inkjet-printer-escpr_1.8.3-1_amd64.deb
+RUN rm -rf /driver/*.*
+
+RUN apt-get install -qqy \
     apt-utils \
     usbutils \
     cups \
@@ -35,14 +42,6 @@ RUN apt-get update -qq  && apt-get upgrade -qqy \
 
 EXPOSE 631
 EXPOSE 5353/udp
-
-# Install driver
-RUN apt install lsb -y
-RUN mkdir /driver
-COPY ./driver /driver
-RUN chmod +x /driver/install.sh
-RUN cd /driver && bash ./install.sh
-RUN rm -rf /driver/*.*
 
 # Baked-in config file changes
 RUN sed -i 's/Listen localhost:631/Listen 0.0.0.0:631/' /etc/cups/cupsd.conf && \
